@@ -72,7 +72,7 @@ iter_loss, iter_acc = np.zeros((niter, 18-2+1)), np.zeros((niter, 18-2+1))
 test_iter_loss, test_iter_acc = np.zeros((niter, 3)), np.zeros((niter, 3))
 for iter in range(niter):
     ##########################################################
-    # train on episodes 2-18, save the model parameters
+    # train on episodes 2-18, save model parameters
     ##########################################################
     trainorder = np.arange(2, 18+1)[np.random.permutation(18-2+1)]
     for ep in trainorder:
