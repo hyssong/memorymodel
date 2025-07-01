@@ -3,6 +3,8 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class gru(nn.Module):
     def __init__(self, dim_input, lr=1e-3, dropout_rate=0):
         super(gru, self).__init__()
@@ -23,6 +25,8 @@ class gru(nn.Module):
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
 
+        self.to(device)
+
     def init_weight(self):
         for name, parameter in self.named_parameters():
             if 'weight' in name and parameter.dim() >= 2:
@@ -33,7 +37,7 @@ class gru(nn.Module):
                 nn.init.constant_(parameter, 0.5)
 
     def to_tensor(self, data):
-        return torch.tensor(data, dtype=torch.float32)
+        return torch.tensor(data, dtype=torch.float32, device=device)
 
     def to_numpy(self, data):
         return data.detach().cpu().numpy()
@@ -45,7 +49,7 @@ class gru(nn.Module):
         self.optimizer.step()
 
     def get_rand_states(self, scale=.1):
-        return torch.randn(self.dim_hidden, ) * scale
+        return torch.randn(self.dim_hidden, device=device) * scale
 
     def forward(self, X):
         self.X = self.to_tensor(X)
@@ -53,10 +57,10 @@ class gru(nn.Module):
         self.h_t = self.get_rand_states()
         self.m_t = self.get_rand_states()
 
-        log_loss = torch.zeros((self.X.shape[1]-1,), dtype=torch.float32)
+        log_loss = torch.zeros((self.X.shape[1]-1,), dtype=torch.float32, device=device)
         log_acc = np.zeros((self.X.shape[1]-1,), dtype=np.float32)
-        log_h = torch.zeros((self.X.shape[1]-1, self.dim_hidden), dtype=torch.float32)
-        log_yhat = torch.zeros((self.X.shape[1]-1, self.dim_output), dtype=torch.float32)
+        log_h = torch.zeros((self.X.shape[1]-1, self.dim_hidden), dtype=torch.float32, device=device)
+        log_yhat = torch.zeros((self.X.shape[1]-1, self.dim_output), dtype=torch.float32, device=device)
         loss = 0
         for self.t in range(self.X.shape[1] - 1):
             self.x_t = self.X[:, self.t]

@@ -3,8 +3,10 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class emKeyValue(nn.Module):
-    def __init__(self, dim_input, nmem, lr=1e-3, dropout_rate=0, fixK=False, fixQ=False, attnshuff=False):
+    def __init__(self, dim_input, nmem, lr=1e-3, alpha=0.5, tau=0.1, dropout_rate=0, fixK=False, fixQ=False, attnshuff=False):
         super(emKeyValue, self).__init__()
 
         self.dim_input = self.dim_output = dim_input
@@ -15,8 +17,8 @@ class emKeyValue(nn.Module):
         self.h2h = nn.Linear(self.dim_hidden, self.dim_hidden * 3, bias=True)
         self.hm2o = nn.Linear(self.dim_hidden, self.dim_output, bias=True)
         self.scale = .1
-        self.W_k = nn.Parameter(torch.randn((self.dim_memory, self.dim_input), dtype=torch.float32) * self.scale)
-        self.W_q = nn.Parameter(torch.randn((self.dim_memory, self.dim_input), dtype=torch.float32) * self.scale)
+        self.W_k = nn.Parameter(torch.randn((self.dim_memory, self.dim_input), dtype=torch.float32, device=device) * self.scale)
+        self.W_q = nn.Parameter(torch.randn((self.dim_memory, self.dim_input), dtype=torch.float32, device=device) * self.scale)
         if fixK==True: self.W_k.requires_grad = False
         if fixQ==True: self.W_q.requires_grad = False
         self.dropout_rate = dropout_rate
@@ -26,10 +28,15 @@ class emKeyValue(nn.Module):
         self.softmax = nn.Softmax(dim=0)
         self.init_weight()
 
+        self.alpha=alpha
+        self.tau=tau
+
         self.n_max_mem = nmem
 
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
         self.criterion = nn.MSELoss()
+
+        self.to(device)
 
     def init_weight(self):
         for name, parameter in self.named_parameters():
@@ -41,7 +48,7 @@ class emKeyValue(nn.Module):
                 nn.init.constant_(parameter, 0.5)
 
     def to_tensor(self, data):
-        return torch.tensor(data, dtype=torch.float32)
+        return torch.tensor(data, dtype=torch.float32, device=device)
 
     def to_numpy(self, data):
         return data.detach().cpu().numpy()
@@ -53,7 +60,7 @@ class emKeyValue(nn.Module):
         self.optimizer.step()
 
     def get_rand_states(self, scale=.1):
-        return torch.randn(self.dim_hidden, ) * scale
+        return torch.randn(self.dim_hidden, device=device) * scale
 
     def forward(self, X, sceneid, storage):
         self.X = self.to_tensor(X)
@@ -64,13 +71,13 @@ class emKeyValue(nn.Module):
         self.m_t = self.get_rand_states()
 
         log_attn, log_m_sc = [], []
-        log_loss = torch.zeros((self.X.shape[1]-1,), dtype=torch.float32)
+        log_loss = torch.zeros((self.X.shape[1]-1,), dtype=torch.float32, device=device)
         log_acc = np.zeros((self.X.shape[1]-1,), dtype=np.float32)
-        log_h = torch.zeros((self.X.shape[1]-1, self.dim_hidden), dtype=torch.float32)
-        log_m = torch.zeros((self.X.shape[1]-1, self.dim_memory), dtype=torch.float32)
-        log_k = torch.zeros((self.X.shape[1]-1, self.dim_memory), dtype=torch.float32)
-        log_q = torch.zeros((self.X.shape[1]-1, self.dim_memory), dtype=torch.float32)
-        log_yhat = torch.zeros((self.X.shape[1]-1, self.dim_output), dtype=torch.float32)
+        log_h = torch.zeros((self.X.shape[1]-1, self.dim_hidden), dtype=torch.float32, device=device)
+        log_m = torch.zeros((self.X.shape[1]-1, self.dim_memory), dtype=torch.float32, device=device)
+        log_k = torch.zeros((self.X.shape[1]-1, self.dim_memory), dtype=torch.float32, device=device)
+        log_q = torch.zeros((self.X.shape[1]-1, self.dim_memory), dtype=torch.float32, device=device)
+        log_yhat = torch.zeros((self.X.shape[1]-1, self.dim_output), dtype=torch.float32, device=device)
         loss = 0
         for self.t in range(self.X.shape[1] - 1):
             self.x_t = self.X[:, self.t]
@@ -92,9 +99,11 @@ class emKeyValue(nn.Module):
             newgate = torch.tanh(i_n + (resetgate * h_n))
             self.h_t = newgate + inputgate * (self.h_t - newgate)
 
+            # input to key & input to query
             self.k_t = self.W_k @ self.x_t
             self.q_t = self.W_q @ self.x_t
 
+            # encode & retrieve memory
             self.encode_memory()
             if len(self.storage) > 1:
                 self.retrieve_memory()
@@ -102,8 +111,8 @@ class emKeyValue(nn.Module):
                 log_m_sc.append(self.m_sc)
 
             # prediction of the next time step
-            if self.dropout_rate>0: self.yhat = self.dropout(self.hm2o(self.h_t * 0.5 + self.m_t * 0.5))
-            else: self.yhat = self.hm2o(self.h_t * 0.5 + self.m_t * 0.5)
+            if self.dropout_rate>0: self.yhat = self.dropout(self.hm2o(self.h_t * self.alpha + self.m_t * (1-self.alpha)))
+            else: self.yhat = self.hm2o(self.h_t * self.alpha + self.m_t * (1-self.alpha))
 
             # calculate loss & log
             loss_it = self.criterion(self.y_t, self.yhat)
@@ -135,8 +144,10 @@ class emKeyValue(nn.Module):
         keys = torch.stack([m['k'] for m in self.storage[:-1]], dim=0)
         values = torch.stack([m['v'].detach() for m in self.storage[:-1]], dim=0)
 
-        self.attn = self.q_t.reshape(1, -1) @ keys.T
+        d = self.q_t.size(-1)
+        self.attn = (self.q_t.reshape(1, -1) @ keys.T) / (self.tau * d ** 0.5)
         self.attn = self.softmax(self.attn[0, :])
+
         if self.attnshuff==True: self.attn = self.attn[torch.randperm(self.attn.size(0))]
         self.m_t = torch.sum(self.attn.unsqueeze(0) @ values, dim=0)  # m_t now depends on q_t → W_q
 
