@@ -2,6 +2,6 @@ A recurrent neural network model with key-value episodic memory buffer watching 
 
 - clip: CLIP embedding time series of _i)_ scenes in episodes 2 to 18 of _This is Us_ Season 1, and _ii)_ scenes in segmented events 1 to 48 of episode 1, _This is Us_ Season 1.
 - code: code that imports data, input, and model to train & test the model
-- data: includes _i)_ event orders for the three scrambled-order groups, _ii)_ event-by-event causal relationship ratings in the events' original event order, _iii)_ event-by-event human memory retrieval matrix in the events' original event order. the data were published in [Song et al. (2025)](https://www.biorxiv.org/content/10.1101/2025.03.12.642853v1) and also deposited in the repository /memoryaha/data/.
+- data: includes _i)_ event orders for the three scrambled-order groups, _ii)_ event-by-event causal relationship ratings in the events' original event order, _iii)_ event-by-event human memory retrieval matrix in the events' original event order. the data were published in [Song et al. (2025)](https://www.biorxiv.org/content/10.1101/2025.03.12.642853v1) and also deposited in the repository [/memoryaha/data/](https://github.com/hyssong/memoryaha/tree/main/data).
 - input: input used for model train & test. PCA was conducted on the CLIP embeddings (50 dimensions) and the data were summarized into train & test to be used for model train & test.
 - model: implements EM-GRU, EM-GRU with shuffled memory, EM-GRU with fixed input-to-key and input-to-query mappings, and GRU without the EM buffer.
