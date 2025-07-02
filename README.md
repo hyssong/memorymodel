@@ -1,1 +1,1 @@
-A recurrent neural network model with key-value episodic memory buffer watching _This is Us_ Season 1 and performing next scene prediction task
+A recurrent neural network model with key-value episodic memory buffer watching _This is Us_ Season 1 and performing next scene prediction task. Model's representations and memory retrieval are compared with the human's event-by-event causal relationship ratings and memory retrieval. 
