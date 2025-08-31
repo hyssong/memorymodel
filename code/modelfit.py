@@ -6,7 +6,7 @@ import torch
 import sys
 import pickle
 
-directory = '/set/directory' # ****** set directory *****
+directory = '/Users/hayoungsong/Documents/_postdoc/modelmind/github'
 sys.path.append(directory+'/model')
 from emKeyValue import emKeyValue
 
@@ -24,7 +24,7 @@ def conv_z2r(z):
 # seed=1
 # param_alpha=0.5
 # param_tau=0.1
-condition = sys.argv[1]          # 'original', 'attnshuff', 'fixKQ'
+condition = sys.argv[1]          # 'original', 'attnshuff'
 seed = int(sys.argv[2])          # 1-20
 param_alpha = float(sys.argv[3]) # base alpha = 0.5, range [0, 0.25, 0.5, 0.75, 1]
 param_tau = float(sys.argv[4])   # base tau   = 0.1, range [0.1, 0.5, 1]
@@ -64,15 +64,13 @@ n_memory = test_input[1].shape[1]-1-1
 
 EM = []
 if condition=='original': model = emKeyValue(input_dim, n_memory, alpha=param_alpha, tau=param_tau)
-elif condition=='attnshuff': model = emKeyValue(input_dim, n_memory, alpha=param_alpha, tau=param_tau, fixK=False, fixQ=False, attnshuff=True)
-elif condition=='fixKQ': model = emKeyValue(input_dim, n_memory, alpha=param_alpha, tau=param_tau, fixK=True, fixQ=True, attnshuff=False)
-
+elif condition=='attnshuff': model = emKeyValue(input_dim, n_memory, alpha=param_alpha, tau=param_tau, attnshuff=True)
 
 iter_loss, iter_acc = np.zeros((niter, 18-2+1)), np.zeros((niter, 18-2+1))
 test_iter_loss, test_iter_acc = np.zeros((niter, 3)), np.zeros((niter, 3))
 for iter in range(niter):
     ##########################################################
-    # train on episodes 2-18, save model parameters
+    # train on episodes 2-18, save the model parameters
     ##########################################################
     trainorder = np.arange(2, 18+1)[np.random.permutation(18-2+1)]
     for ep in trainorder:
@@ -171,7 +169,6 @@ for iter in range(niter):
     # test-ana
     ##########################################################
     print('  h:    '+str(scipy.stats.spearmanr(causal_relationship[nanid==1], h_cat[nanid==1])))
-    print('  m:    '+str(scipy.stats.spearmanr(causal_relationship[nanid==1], m_cat[nanid==1])))
     print('  retr: '+str(scipy.stats.spearmanr(retrieval_mat[np.where(~np.isnan(memory_retrieval))], memory_retrieval[np.where(~np.isnan(memory_retrieval))])))
 
     np.savez_compressed(directory_output+'/seed'+str(seed)+'_'+condition+'/summ_'+str(iter+1),
