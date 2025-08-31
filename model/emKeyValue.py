@@ -6,7 +6,7 @@ import torch.nn as nn
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class emKeyValue(nn.Module):
-    def __init__(self, dim_input, nmem, lr=1e-3, alpha=0.5, tau=0.1, dropout_rate=0, fixK=False, fixQ=False, attnshuff=False):
+    def __init__(self, dim_input, nmem, lr=1e-3, alpha=0.5, tau=0.1, dropout_rate=0, attnshuff=False):
         super(emKeyValue, self).__init__()
 
         self.dim_input = self.dim_output = dim_input
@@ -19,8 +19,6 @@ class emKeyValue(nn.Module):
         self.scale = .1
         self.W_k = nn.Parameter(torch.randn((self.dim_memory, self.dim_input), dtype=torch.float32, device=device) * self.scale)
         self.W_q = nn.Parameter(torch.randn((self.dim_memory, self.dim_input), dtype=torch.float32, device=device) * self.scale)
-        if fixK==True: self.W_k.requires_grad = False
-        if fixQ==True: self.W_q.requires_grad = False
         self.dropout_rate = dropout_rate
         self.dropout = nn.Dropout(self.dropout_rate)
 
