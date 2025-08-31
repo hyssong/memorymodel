@@ -4,4 +4,4 @@ A recurrent neural network with key-value episodic memory buffer watching [_This
 - code: code that imports data, input, and model to train & test the model
 - data: includes _i)_ event orders for the three scrambled-order groups, _ii)_ event-by-event causal relationship ratings in the events' original event order, _iii)_ event-by-event human memory retrieval matrix in the events' original event order. the data were published in [Song et al. (2025)](https://www.biorxiv.org/content/10.1101/2025.03.12.642853v1) and also deposited in the repository [/memoryaha/data/](https://github.com/hyssong/memoryaha/tree/main/data).
 - input: input used for model train & test. PCA was applied to the CLIP embeddings to reduce the dimension to 50, and the data were summarized to be used for model train & test.
-- model: emKeyValue.py implements EM-GRU, EM-GRU with shuffled memory, and EM-GRU with fixed input-to-key and input-to-query mappings. gru.py implements GRU without the EM buffer.
+- model: emKeyValue.py implements EM-GRU and EM-GRU with shuffled memory. gru.py implements GRU without the EM buffer.
