@@ -6,7 +6,7 @@ import torch
 import sys
 import pickle
 
-directory = '/Users/hayoungsong/Documents/_postdoc/modelmind/github'
+directory = '/directory' # ****** set current directory ******
 sys.path.append(directory+'/model')
 from emKeyValue import emKeyValue
 
