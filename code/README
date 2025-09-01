@@ -1,0 +1,6 @@
+modelfit.py: imports emKeyValue and inputs for EM-GRU model training
+modelfit_gru.py: imports gru and inputs for no EM (GRU) model training
+
+code_lossacc.py: generates Figure 3
+code_causalmemory.py: generates Figures 4-6
+code_pattern.py: generates Figure 7
