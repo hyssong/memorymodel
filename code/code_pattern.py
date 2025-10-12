@@ -13,7 +13,7 @@ def spearman_corrcoef(a):
     return scipy.stats.spearmanr(a, axis=1, nan_policy='omit').correlation
 
 #####################
-dir_base = '/directory' # ****** set current directory ******
+dir_base = os.path.dirname(os.getcwd())
 
 with open(dir_base+'/input/input.pkl', 'rb') as f: data_input = pickle.load(f)
 value = []
