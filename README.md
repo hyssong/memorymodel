@@ -6,8 +6,15 @@ A recurrent neural network with key-value episodic memory buffer watching [_This
 - **input**: input used for model train & test. PCA was applied to the CLIP embeddings to reduce the dimension to 50, and the data were summarized to be used for model train & test.
 - **model**: emKeyValue.py implements EM-GRU and EM-GRU with shuffled memory. gru.py implements GRU without the EM buffer.
 
-## setup
+## installation
 To run the models and codes, it is necessary to install the Python packages included in environment.yml. We recommend installing conda and executing the following commands. This takes less than a minute in a standard laptop.
 ```bash
 conda env create -f environment.yml
 conda activate emgru
+
+## model training
+The following command trains the EM-GRU model on episodes 2-18, for 50 iterations, using a selected random seed. This takes approximately 2 hours on a standard laptop without GPU.
+```bash
+python code/modelfit.py original 1 0.5 0.1
+# python [condition] [seed number] [alpha] [tau]
+
