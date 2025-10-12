@@ -6,7 +6,7 @@ A recurrent neural network with key-value episodic memory buffer watching [_This
 - input: input used for model train & test. PCA was applied to the CLIP embeddings to reduce the dimension to 50, and the data were summarized to be used for model train & test.
 - model: emKeyValue.py implements EM-GRU and EM-GRU with shuffled memory. gru.py implements GRU without the EM buffer.
 
-# setup
+## setup
+```bash
 conda env create -f environment.yml
-
 conda activate emgru
