@@ -8,4 +8,5 @@ A recurrent neural network with key-value episodic memory buffer watching [_This
 
 # setup
 conda env create -f environment.yml
+
 conda activate emgru
