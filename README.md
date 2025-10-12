@@ -7,7 +7,7 @@ A recurrent neural network with key-value episodic memory buffer watching [_This
 - **model**: emKeyValue.py implements EM-GRU and EM-GRU with shuffled memory. gru.py implements GRU without the EM buffer.
 
 ## setup
-To run the model and codes, it is necessary to install the Python packages included in environment.yml. We recommend installing conda and executing the following commands:
+To run the models and codes, it is necessary to install the Python packages included in environment.yml. We recommend installing conda and executing the following commands. This takes less than a minute in a standard laptop.
 ```bash
 conda env create -f environment.yml
 conda activate emgru
