@@ -93,8 +93,8 @@ for iter in range(niter):
         'i2h': model.i2h.state_dict(),
         'h2h': model.h2h.state_dict(),
         'hm2o': model.hm2o.state_dict(),
-        'W_k': model.W_k,
-        'W_q': model.W_q
+        'W_k': model.W_k, # no W_k in the directMem & copypaste
+        'W_q': model.W_q  # no W_q in the copypaste
     }, directory_output+'/seed'+str(seed)+'_'+condition+'/model_'+str(iter+1)+'.pth')
 
     ##########################################################
