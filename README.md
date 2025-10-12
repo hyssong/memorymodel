@@ -19,3 +19,9 @@ The following command trains the EM-GRU model on episodes 2-18 and tests it on e
 python code/modelfit.py original 1 0.5 0.1
 # python code [condition] [seed number] [hyperparameter: alpha] [hyperparameter: tau]
 ```
+
+## reproducing results
+The manuscript reports results obtained by running the model under 20 different random seeds.
+- **code_lossacc.py**: generates Figure 3 in the manuscript
+- **code_causalmemory.py**: generates Figures 4-6 in the manuscript
+- **code_pattern.py**: generates Figure 7 in the manuscript
