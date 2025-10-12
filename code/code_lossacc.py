@@ -30,7 +30,7 @@ nseed = 20
 errorbar = 'confidence_interval' # 'standard_error'
 param_alpha, param_tau = 0.5, 0.1
 
-dir_base = os.path.dirname(os.getcwd())
+dir_base = os.getcwd()
 directory = dir_base+'/output/alpha'+str(param_alpha)+'_tau'+str(param_tau)
 
 
