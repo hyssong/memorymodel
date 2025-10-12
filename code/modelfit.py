@@ -9,6 +9,8 @@ import pickle
 directory = os.getcwd()
 sys.path.append(directory+'/model')
 from emKeyValue import emKeyValue
+from directMem import directMem
+from copypaste import copypaste
 
 def conv_r2z(r):
     with np.errstate(invalid='ignore', divide='ignore'):
@@ -67,6 +69,8 @@ n_memory = test_input[1].shape[1]-1-1
 EM = []
 if condition=='original': model = emKeyValue(input_dim, n_memory, alpha=param_alpha, tau=param_tau)
 elif condition=='attnshuff': model = emKeyValue(input_dim, n_memory, alpha=param_alpha, tau=param_tau, attnshuff=True)
+elif condition=='copypaste': model = copypaste(input_dim, n_memory, alpha=param_alpha, tau=param_tau, time_separation=10)
+elif condition=='directMem': model = directMem(input_dim, n_memory, alpha=param_alpha, tau=param_tau)
 
 iter_loss, iter_acc = np.zeros((niter, 18-2+1)), np.zeros((niter, 18-2+1))
 test_iter_loss, test_iter_acc = np.zeros((niter, 3)), np.zeros((niter, 3))
