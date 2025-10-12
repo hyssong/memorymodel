@@ -1,0 +1,18 @@
+name: emgru
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12.2=hdf0ec26_0_cpython
+  - numpy=1.26.4=py312h7f4fdc5_0
+  - pandas=2.2.2=py312hd77ebd4_0
+  - scikit-learn=1.4.2=py312hd77ebd4_1
+  - statsmodels=0.14.2=py312ha86b861_0
+  - pytorch=2.4.1=py3.12_0
+  - pip=24.0=py312hca03da5_0
+  - pip:
+      - matplotlib==3.8.3
+      - pingouin==0.5.5
+      - scipy==1.12.0
+prefix: /opt/anaconda3
