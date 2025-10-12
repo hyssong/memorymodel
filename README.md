@@ -14,7 +14,7 @@ conda activate emgru
 ```
 
 ## running the model
-The following command trains the EM-GRU model on episodes 2-18 and tests it on episode 1, for 50 iterations, using a selected random seed. It will create an /output/ folder and save model parameters, model performance, and loss and accuracy over the course of iterations. This takes approximately 2 hours on a standard laptop without GPU.
+The following command trains the EM-GRU model on episodes 2-18 and tests it on episode 1, across 50 iterations, using a selected random seed. It will create an /output/ folder and save model parameters, model performance, and loss and accuracy over the course of iterations. This takes approximately 2 hours on a standard laptop without GPU.
 ```bash
 python code/modelfit.py original 1 0.5 0.1
 # python code [condition] [seed number] [hyperparameter: alpha] [hyperparameter: tau]
