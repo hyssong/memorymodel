@@ -23,7 +23,7 @@ def partial_correlation(X, Y, A):
     return np.array(pcorr['r']).item(), np.array(pcorr['p-val']).item()
 
 ##########################################
-dir_base = os.path.dirname(os.getcwd())
+dir_base = os.getcwd()
 
 nanid = np.triu(np.zeros((48,48))+1,1)
 nanid[nanid==0] = np.nan
