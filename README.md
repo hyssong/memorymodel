@@ -11,10 +11,11 @@ To run the models and codes, it is necessary to install the Python packages incl
 ```bash
 conda env create -f environment.yml
 conda activate emgru
+```
 
 ## model training
 The following command trains the EM-GRU model on episodes 2-18, for 50 iterations, using a selected random seed. This takes approximately 2 hours on a standard laptop without GPU.
 ```bash
 python code/modelfit.py original 1 0.5 0.1
 # python [condition] [seed number] [alpha] [tau]
-
+```
