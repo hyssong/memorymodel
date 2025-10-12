@@ -6,7 +6,7 @@ import torch
 import sys
 import pickle
 
-directory = os.path.dirname(os.getcwd())
+directory = os.getcwd()
 sys.path.append(directory+'/model')
 from emKeyValue import emKeyValue
 
@@ -36,6 +36,8 @@ torch.manual_seed(seed), np.random.seed(seed)
 if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
 
 # setting output directory
+if os.path.exists(directory+'/output')==False:
+    os.mkdir(directory+'/output')
 directory_output = directory+'/output/alpha'+str(param_alpha)+'_tau'+str(param_tau)
 if os.path.exists(directory_output)==False:
     os.mkdir(directory_output)
