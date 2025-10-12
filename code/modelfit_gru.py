@@ -7,7 +7,7 @@ import torch
 import sys
 import pickle
 
-directory = '/directory' # ****** set current directory ******
+directory = os.path.dirname(os.getcwd())
 sys.path.append(directory+'/model')
 from gru import gru
 
