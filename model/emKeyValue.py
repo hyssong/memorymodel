@@ -131,9 +131,9 @@ class emKeyValue(nn.Module):
             'q': self.q_t,
             'v': self.h_t,
             'scene': self.sceneid[self.t],
-            'attnsum': 0.0,
-            'n': 0.0,
-            'attn': 0.0
+            # 'attnsum': 0.0,
+            # 'n': 0.0,
+            # 'attn': 0.0
         })
         if len(self.storage) > self.n_max_mem:
             self.storage.pop(0)
@@ -151,10 +151,10 @@ class emKeyValue(nn.Module):
 
         self.m_sc = self.storage[torch.argmax(self.attn).item()]['scene']
 
-        for i, m in enumerate(self.storage[:-1]):
-            m['attnsum'] += self.attn[i].item()
-            m['n'] += 1
-            m['attn'] = m['attnsum'] / m['n']
+        # for i, m in enumerate(self.storage[:-1]):
+        #     m['attnsum'] += self.attn[i].item()
+        #     m['n'] += 1
+        #     m['attn'] = m['attnsum'] / m['n']
 
     @torch.no_grad()
     def forward_nograd(self, X, sceneid, storage):
