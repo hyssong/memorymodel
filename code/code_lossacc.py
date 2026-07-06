@@ -34,7 +34,6 @@ param_alpha, param_tau = 0.5, 0.1
 
 dir_base = '/directory' # ****** set current directory ******
 directory = dir_base+'/output/alpha'+str(param_alpha)+'_tau'+str(param_tau)
-# directory = '/Users/hayoungsong/Documents/_postdoc/modelmind/output_iter50/alpha'+str(param_alpha)+'_tau'+str(param_tau)
 
 train_loss, train_acc, test_loss, test_acc = {}, {}, {}, {}
 
