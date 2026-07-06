@@ -28,11 +28,13 @@ nPC = 50
 donne = 50
 nseed = 20
 errorbar = 'confidence_interval' # 'standard_error'
+if errorbar=='confidence_interval': er_w = 1.96
+elif errorbar=='standard_error': er_w = 1
 param_alpha, param_tau = 0.5, 0.1
 
-dir_base = os.getcwd()
+dir_base = '/directory' # ****** set current directory ******
 directory = dir_base+'/output/alpha'+str(param_alpha)+'_tau'+str(param_tau)
-
+# directory = '/Users/hayoungsong/Documents/_postdoc/modelmind/output_iter50/alpha'+str(param_alpha)+'_tau'+str(param_tau)
 
 train_loss, train_acc, test_loss, test_acc = {}, {}, {}, {}
 
@@ -50,23 +52,13 @@ for cdi, cdt in enumerate(conditions):
         iter_acc_cat.append(np.mean(iter_acc,1)[:donne])
     train_loss[cdt], train_acc[cdt] = np.array(iter_loss_cat), np.array(iter_acc_cat)
     ax1.plot(np.arange(donne)+1, np.mean(np.array(iter_loss_cat),0), color=colorr[cdi], linewidth=1)
-    if errorbar == 'confidence_interval':
-        ax1.fill_between(np.arange(donne)+1, np.mean(np.array(iter_loss_cat),0)-1.96*np.std(np.array(iter_loss_cat),0),
-                         np.mean(np.array(iter_loss_cat),0)+1.96*np.std(np.array(iter_loss_cat),0), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
-    elif errorbar == 'standard_error':
-        ax1.fill_between(np.arange(donne)+1, np.mean(np.array(iter_loss_cat),0)-np.std(np.array(iter_loss_cat),0)/np.sqrt(nseed),
-                         np.mean(np.array(iter_loss_cat),0)+np.std(np.array(iter_loss_cat),0)/np.sqrt(nseed), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
+    ax1.fill_between(np.arange(donne)+1, np.mean(np.array(iter_loss_cat),0)-np.std(np.array(iter_loss_cat),0)/np.sqrt(nseed),
+                     np.mean(np.array(iter_loss_cat),0)+er_w*np.std(np.array(iter_loss_cat),0)/np.sqrt(nseed), color=colorr[cdi], alpha=0.4,
+                     edgecolor='none')
     ax2.plot(np.arange(donne)+1, conv_z2r(np.mean(np.array(iter_acc_cat),0)), color=colorr[cdi], linewidth=1)
-    if errorbar == 'confidence_interval':
-        ax2.fill_between(np.arange(donne)+1, conv_z2r(np.mean(np.array(iter_acc_cat),0)-1.96*np.std(np.array(iter_acc_cat),0)),
-                         conv_z2r(np.mean(np.array(iter_acc_cat),0)+1.96*np.std(np.array(iter_acc_cat),0)), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
-    elif errorbar == 'standard_error':
-        ax2.fill_between(np.arange(donne)+1, conv_z2r(np.mean(np.array(iter_acc_cat),0)-np.std(np.array(iter_acc_cat),0)/np.sqrt(nseed)),
-                         conv_z2r(np.mean(np.array(iter_acc_cat),0)+np.std(np.array(iter_acc_cat),0)/np.sqrt(nseed)), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
+    ax2.fill_between(np.arange(donne)+1, conv_z2r(np.mean(np.array(iter_acc_cat),0)-np.std(np.array(iter_acc_cat),0)/np.sqrt(nseed)),
+                     conv_z2r(np.mean(np.array(iter_acc_cat),0)+er_w*np.std(np.array(iter_acc_cat),0)/np.sqrt(nseed)), color=colorr[cdi], alpha=0.4,
+                     edgecolor='none')
 for ax in [ax1, ax2]:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -91,23 +83,13 @@ for cdi, cdt in enumerate(conditions):
 
     test_loss[cdt], test_acc[cdt] = np.array(test_iter_loss_cat), np.array(test_iter_acc_cat)
     ax1.plot(np.arange(donne)+1, np.mean(np.array(test_iter_loss_cat),0), color=colorr[cdi], linewidth=1)
-    if errorbar == 'confidence_interval':
-        ax1.fill_between(np.arange(donne)+1, np.mean(np.array(test_iter_loss_cat),0)-1.96*np.std(np.array(test_iter_loss_cat),0),
-                         np.mean(np.array(test_iter_loss_cat),0)+1.96*np.std(np.array(test_iter_loss_cat),0), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
-    elif errorbar == 'standard_error':
-        ax1.fill_between(np.arange(donne)+1, np.mean(np.array(test_iter_loss_cat),0)-np.std(np.array(test_iter_loss_cat),0)/np.sqrt(nseed),
-                         np.mean(np.array(test_iter_loss_cat),0)+np.std(np.array(test_iter_loss_cat),0)/np.sqrt(nseed), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
+    ax1.fill_between(np.arange(donne)+1, np.mean(np.array(test_iter_loss_cat),0)-np.std(np.array(test_iter_loss_cat),0)/np.sqrt(nseed),
+                     np.mean(np.array(test_iter_loss_cat),0)+er_w*np.std(np.array(test_iter_loss_cat),0)/np.sqrt(nseed), color=colorr[cdi], alpha=0.4,
+                     edgecolor='none')
     ax2.plot(np.arange(donne)+1, conv_z2r(np.mean(np.array(test_iter_acc_cat),0)), color=colorr[cdi], linewidth=1)
-    if errorbar == 'confidence_interval':
-        ax2.fill_between(np.arange(donne)+1, conv_z2r(np.mean(np.array(test_iter_acc_cat),0)-1.96*np.std(np.array(test_iter_acc_cat),0)),
-                         conv_z2r(np.mean(np.array(test_iter_acc_cat),0)+1.96*np.std(np.array(test_iter_acc_cat),0)), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
-    elif errorbar == 'standard_error':
-        ax2.fill_between(np.arange(donne)+1, conv_z2r(np.mean(np.array(test_iter_acc_cat),0)-np.std(np.array(test_iter_acc_cat),0)/np.sqrt(nseed)),
-                         conv_z2r(np.mean(np.array(test_iter_acc_cat),0)+np.std(np.array(test_iter_acc_cat),0)/np.sqrt(nseed)), color=colorr[cdi], alpha=0.4,
-                         edgecolor='none')
+    ax2.fill_between(np.arange(donne)+1, conv_z2r(np.mean(np.array(test_iter_acc_cat),0)-np.std(np.array(test_iter_acc_cat),0)/np.sqrt(nseed)),
+                     conv_z2r(np.mean(np.array(test_iter_acc_cat),0)+er_w*np.std(np.array(test_iter_acc_cat),0)/np.sqrt(nseed)), color=colorr[cdi], alpha=0.4,
+                     edgecolor='none')
 for ax in [ax1, ax2]:
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
